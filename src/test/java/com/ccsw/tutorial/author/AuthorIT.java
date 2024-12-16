@@ -155,5 +155,15 @@ public class AuthorIT {
 
           assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
-
+    
+	ParameterizedTypeReference<List<AuthorDto>> responseTypeList = new ParameterizedTypeReference<List<AuthorDto>>(){};
+	
+	@Test
+	public void findAllShouldReturnAllAuthor() {
+	
+	      ResponseEntity<List<AuthorDto>> response = restTemplate.exchange(LOCALHOST + port + SERVICE_PATH, HttpMethod.GET, null, responseTypeList);
+	
+	      assertNotNull(response);
+	      assertEquals(TOTAL_AUTHORS, response.getBody().size());
+	} 
 }
