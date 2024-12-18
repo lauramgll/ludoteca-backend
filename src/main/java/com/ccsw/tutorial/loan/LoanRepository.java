@@ -1,11 +1,13 @@
 package com.ccsw.tutorial.loan;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.ccsw.tutorial.loan.model.Loan;
 
@@ -18,7 +20,8 @@ public interface LoanRepository extends CrudRepository<Loan, Long> {
 	           "(:idGame IS NULL OR l.game.id = :idGame) AND " +
 	           "(:idClient IS NULL OR l.client.id = :idClient) AND " +
 	           "(:fecha IS NULL OR :fecha BETWEEN l.startDate AND l.endDate)")
-	    List<Loan> findLoansByFilters(@Param("idGame") Long idGame, 
+	Page<Loan> findLoansByFilters(@Param("idGame") Long idGame, 
 	                                  @Param("idClient") Long idClient, 
-	                                  @Param("fecha") LocalDate fecha);
+	                                  @Param("fecha") LocalDate fecha,
+									  Pageable pageable);
 }	
