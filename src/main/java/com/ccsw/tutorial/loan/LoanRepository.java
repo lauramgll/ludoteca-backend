@@ -1,13 +1,13 @@
 package com.ccsw.tutorial.loan;
 
 import java.time.LocalDate;
-
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 
 import com.ccsw.tutorial.loan.model.Loan;
 
@@ -24,4 +24,27 @@ public interface LoanRepository extends CrudRepository<Loan, Long> {
 	                                  @Param("idClient") Long idClient, 
 	                                  @Param("fecha") LocalDate fecha,
 									  Pageable pageable);
+	
+	
+	@Query("SELECT l FROM Loan l WHERE l.game.id = :gameId AND " +
+		       "((l.startDate BETWEEN :startDate AND :endDate) OR " +
+		       "(l.endDate BETWEEN :startDate AND :endDate) OR " +
+		       "(:startDate BETWEEN l.startDate AND l.endDate) OR " +
+		       "(:endDate BETWEEN l.startDate AND l.endDate))")
+		List<Loan> findLoansByGameIdAndDateRange(
+		    @Param("gameId") Long gameId,
+		    @Param("startDate") LocalDate startDate,
+		    @Param("endDate") LocalDate endDate
+		);
+	
+	@Query("SELECT l FROM Loan l WHERE l.client.id = :clientId AND " +
+		       "((l.startDate BETWEEN :startDate AND :endDate) OR " +
+		       "(l.endDate BETWEEN :startDate AND :endDate) OR " +
+		       "(:startDate BETWEEN l.startDate AND l.endDate) OR " +
+		       "(:endDate BETWEEN l.startDate AND l.endDate))")
+		List<Loan> findLoansByClientIdAndDateRange(
+		    @Param("clientId") Long clientId,
+		    @Param("startDate") LocalDate startDate,
+		    @Param("endDate") LocalDate endDate
+		);
 }	

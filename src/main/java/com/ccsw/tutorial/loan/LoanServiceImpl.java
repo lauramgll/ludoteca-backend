@@ -46,6 +46,10 @@ public class LoanServiceImpl implements LoanService {
      */
 	@Override
 	public Page<Loan> findPage(LoanSearchDto dto) {
+	    System.out.println("Processing DTO in service:");
+	    System.out.println("idGame: " + dto.getIdGame());
+	    System.out.println("idClient: " + dto.getIdClient());
+	    System.out.println("date: " + dto.getDate());
 	    return loanRepository.findLoansByFilters(dto.getIdGame(), dto.getIdClient(), dto.getDate(), dto.getPageable().getPageable());
 	}
 	
@@ -56,17 +60,19 @@ public class LoanServiceImpl implements LoanService {
     public void save(Long id, LoanDto dto) {
 
         Loan loan;
-
+        
         if (id == null) {
-        	loan = new Loan();
+            loan = new Loan();
         } else {
-        	loan = this.loanRepository.findById(id).orElse(null);
+            loan = this.loanRepository.findById(id).orElse(null);
         }
-
+        
         BeanUtils.copyProperties(dto, loan, "id", "game", "client");
 
         loan.setGame(gameService.get(dto.getGame().getId()));
         loan.setClient(clientService.get(dto.getClient().getId()));
+
+        validateLoanDates(loan);
 
         this.loanRepository.save(loan);
     }
@@ -91,4 +97,31 @@ public class LoanServiceImpl implements LoanService {
     public List<Loan> findAll() {
         return (List<Loan>) this.loanRepository.findAll();
     }
+    
+    private void validateLoanDates(Loan loan) {
+    	// Validar que el juego no esté prestado en el rango de fechas
+        List<Loan> existingLoansByGame = loanRepository.findLoansByGameIdAndDateRange(
+            loan.getGame().getId(),
+            loan.getStartDate(),
+            loan.getEndDate()
+        );
+        if (!existingLoansByGame.isEmpty()) {
+            throw new LoanDateConflictException("El juego ya está prestado a otro cliente en el rango de fechas especificado.");
+        }
+
+        // Validar que el cliente no tenga más de dos préstamos en un mismo rango de fechas
+        List<Loan> existingLoansByClient = loanRepository.findLoansByClientIdAndDateRange(
+            loan.getClient().getId(),
+            loan.getStartDate(),
+            loan.getEndDate()
+        );
+
+        for (Loan existingLoan : existingLoansByClient) {
+            if (loan.getStartDate().isBefore(existingLoan.getEndDate().plusDays(1)) &&
+                loan.getEndDate().isAfter(existingLoan.getStartDate().minusDays(1))) {
+                throw new LoanDateConflictException("El cliente no puede tener más de dos préstamos activos en un mismo rango de fechas.");
+            }
+        }
+    }
+
 }

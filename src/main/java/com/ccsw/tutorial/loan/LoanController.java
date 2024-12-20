@@ -7,12 +7,16 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.ccsw.tutorial.loan.model.Loan;
 import com.ccsw.tutorial.loan.model.LoanDto;
@@ -62,7 +66,8 @@ public class LoanController {
     @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
     public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody LoanDto dto) {
 
-        loanService.save(id, dto);
+    	this.loanService.save(id, dto);
+
     }
     
     /**
@@ -90,4 +95,12 @@ public class LoanController {
 
         return loans.stream().map(e -> mapper.map(e, LoanDto.class)).collect(Collectors.toList());
     }
+    
+    @ExceptionHandler(LoanDateConflictException.class)
+    public ResponseEntity<String> handleLoanDateConflict(LoanDateConflictException ex) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ex.getMessage());
+    }
+
 }
