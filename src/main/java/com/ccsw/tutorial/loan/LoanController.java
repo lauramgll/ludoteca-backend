@@ -1,6 +1,8 @@
 package com.ccsw.tutorial.loan;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.ccsw.tutorial.loan.model.Loan;
 import com.ccsw.tutorial.loan.model.LoanDto;
@@ -99,7 +100,11 @@ public class LoanController {
 	}
 
 	@ExceptionHandler(LoanDateConflictException.class)
-	public ResponseEntity<String> handleLoanDateConflict(LoanDateConflictException ex) {
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	public ResponseEntity<Map<String, String>> handleLoanDateConflictException(LoanDateConflictException ex) {
+	    Map<String, String> errorResponse = new HashMap<>();
+	    errorResponse.put("error", ex.getMessage());
+	    return ResponseEntity
+	        .status(HttpStatus.BAD_REQUEST)
+	        .body(errorResponse);
 	}
 }

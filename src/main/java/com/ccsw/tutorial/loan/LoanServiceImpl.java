@@ -46,10 +46,6 @@ public class LoanServiceImpl implements LoanService {
 	 */
 	@Override
 	public Page<Loan> findPage(LoanSearchDto dto) {
-		System.out.println("Processing DTO in service:");
-		System.out.println("idGame: " + dto.getIdGame());
-		System.out.println("idClient: " + dto.getIdClient());
-		System.out.println("date: " + dto.getDate());
 		return loanRepository.findLoansByFilters(dto.getIdGame(), dto.getIdClient(), dto.getDate(),
 				dto.getPageable().getPageable());
 	}
