@@ -11,7 +11,6 @@ import com.ccsw.tutorial.game.model.GameDto;
  */
 public interface GameService {
 
-	
     /**
      * Recupera un {@link Game} a partir de su ID
      *
@@ -36,5 +35,4 @@ public interface GameService {
      * @param dto datos de la entidad
      */
     void save(Long id, GameDto dto);
-
 }

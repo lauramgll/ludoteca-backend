@@ -19,65 +19,65 @@ import java.util.List;
 @Transactional
 public class AuthorServiceImpl implements AuthorService {
 
-    @Autowired
-    AuthorRepository authorRepository;
+	@Autowired
+	AuthorRepository authorRepository;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Author get(Long id) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Author get(Long id) {
 
-        return this.authorRepository.findById(id).orElse(null);
-    }
+		return this.authorRepository.findById(id).orElse(null);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Page<Author> findPage(AuthorSearchDto dto) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Page<Author> findPage(AuthorSearchDto dto) {
 
-        return this.authorRepository.findAll(dto.getPageable().getPageable());
-    }
+		return this.authorRepository.findAll(dto.getPageable().getPageable());
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save(Long id, AuthorDto data) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void save(Long id, AuthorDto data) {
 
-        Author author;
+		Author author;
 
-        if (id == null) {
-            author = new Author();
-        } else {
-            author = this.get(id);
-        }
+		if (id == null) {
+			author = new Author();
+		} else {
+			author = this.get(id);
+		}
 
-        BeanUtils.copyProperties(data, author, "id");
+		BeanUtils.copyProperties(data, author, "id");
 
-        this.authorRepository.save(author);
-    }
+		this.authorRepository.save(author);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Long id) throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Long id) throws Exception {
 
-        if(this.get(id) == null){
-            throw new Exception("Not exists");
-        }
+		if (this.get(id) == null) {
+			throw new Exception("Not exists");
+		}
 
-        this.authorRepository.deleteById(id);
-    }
+		this.authorRepository.deleteById(id);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Author> findAll() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Author> findAll() {
 
-        return (List<Author>) this.authorRepository.findAll();
-    }
+		return (List<Author>) this.authorRepository.findAll();
+	}
 }

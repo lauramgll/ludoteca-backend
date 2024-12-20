@@ -8,13 +8,13 @@ import com.ccsw.tutorial.common.pagination.PageableRequest;
  */
 public class AuthorSearchDto {
 
-    private PageableRequest pageable;
+	private PageableRequest pageable;
 
-    public PageableRequest getPageable() {
-        return pageable;
-    }
+	public PageableRequest getPageable() {
+		return pageable;
+	}
 
-    public void setPageable(PageableRequest pageable) {
-        this.pageable = pageable;
-    }
+	public void setPageable(PageableRequest pageable) {
+		this.pageable = pageable;
+	}
 }

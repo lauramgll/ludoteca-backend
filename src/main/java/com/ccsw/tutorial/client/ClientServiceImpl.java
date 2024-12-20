@@ -43,6 +43,7 @@ public class ClientServiceImpl implements ClientService {
 	 */
 	@Override
 	public void save(Long id, ClientDto dto) {
+
 		// Validar que el nombre no exista
 		Optional<Client> existingClient = clientRepository.findByName(dto.getName());
 
@@ -75,5 +76,4 @@ public class ClientServiceImpl implements ClientService {
 
 		this.clientRepository.deleteById(id);
 	}
-
 }

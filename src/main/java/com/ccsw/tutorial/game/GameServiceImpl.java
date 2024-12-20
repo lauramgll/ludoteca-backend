@@ -76,5 +76,4 @@ public class GameServiceImpl implements GameService {
 
         this.gameRepository.save(game);
     }
-
 }

@@ -11,5 +11,5 @@ import com.ccsw.tutorial.client.model.Client;
  *
  */
 public interface ClientRepository extends CrudRepository<Client, Long> {
-    Optional<Client> findByName(String name);
+	Optional<Client> findByName(String name);
 }

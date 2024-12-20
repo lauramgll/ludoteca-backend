@@ -30,56 +30,53 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @CrossOrigin(origins = "*")
 public class ClientController {
 
-    @Autowired
-    ClientService clientService;
+	@Autowired
+	ClientService clientService;
 
-    @Autowired
-    ModelMapper mapper;
+	@Autowired
+	ModelMapper mapper;
 
-    /**
-     * Método para recuperar todos los {@link Client}
-     *
-     * @return {@link List} de {@link ClientDto}
-     */
-    @Operation(summary = "Find", description = "Method that return a list of Clients"
-    )
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public List<ClientDto> findAll() {
+	/**
+	 * Método para recuperar todos los {@link Client}
+	 *
+	 * @return {@link List} de {@link ClientDto}
+	 */
+	@Operation(summary = "Find", description = "Method that return a list of Clients")
+	@RequestMapping(path = "", method = RequestMethod.GET)
+	public List<ClientDto> findAll() {
 
-        List<Client> clients = this.clientService.findAll();
+		List<Client> clients = this.clientService.findAll();
 
-        return clients.stream().map(e -> mapper.map(e, ClientDto.class)).collect(Collectors.toList());
-    }
+		return clients.stream().map(e -> mapper.map(e, ClientDto.class)).collect(Collectors.toList());
+	}
 
-    /**
-     * Método para crear o actualizar un {@link Client}
-     *
-     * @param id PK de la entidad
-     * @param dto datos de la entidad
-     */
-    @Operation(summary = "Save or Update", description = "Method that saves or updates a Client"
-    )
-    @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
-    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody ClientDto dto) {
+	/**
+	 * Método para crear o actualizar un {@link Client}
+	 *
+	 * @param id  PK de la entidad
+	 * @param dto datos de la entidad
+	 */
+	@Operation(summary = "Save or Update", description = "Method that saves or updates a Client")
+	@RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
+	public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody ClientDto dto) {
 
-        this.clientService.save(id, dto);
-    }
+		this.clientService.save(id, dto);
+	}
 
-    /**
-     * Método para borrar un {@link Client}
-     *
-     * @param id PK de la entidad
-     */
-    @Operation(summary = "Delete", description = "Method that deletes a Client")
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable("id") Long id) throws Exception {
+	/**
+	 * Método para borrar un {@link Client}
+	 *
+	 * @param id PK de la entidad
+	 */
+	@Operation(summary = "Delete", description = "Method that deletes a Client")
+	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable("id") Long id) throws Exception {
 
-        this.clientService.delete(id);
-    }
+		this.clientService.delete(id);
+	}
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        // Devuelve una respuesta HTTP con el código 400 y el mensaje de error
-        return ResponseEntity.badRequest().body(ex.getMessage());
-    }
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+		return ResponseEntity.badRequest().body(ex.getMessage());
+	}
 }

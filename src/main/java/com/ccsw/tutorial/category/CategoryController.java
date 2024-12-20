@@ -21,51 +21,48 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 public class CategoryController {
 
-    @Autowired
-    CategoryService categoryService;
+	@Autowired
+	CategoryService categoryService;
 
-    @Autowired
-    ModelMapper mapper;
+	@Autowired
+	ModelMapper mapper;
 
-    /**
-     * Método para recuperar todas las {@link Category}
-     *
-     * @return {@link List} de {@link CategoryDto}
-     */
-    @Operation(summary = "Find", description = "Method that return a list of Categories"
-    )
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public List<CategoryDto> findAll() {
+	/**
+	 * Método para recuperar todas las {@link Category}
+	 *
+	 * @return {@link List} de {@link CategoryDto}
+	 */
+	@Operation(summary = "Find", description = "Method that return a list of Categories")
+	@RequestMapping(path = "", method = RequestMethod.GET)
+	public List<CategoryDto> findAll() {
 
-        List<Category> categories = this.categoryService.findAll();
+		List<Category> categories = this.categoryService.findAll();
 
-        return categories.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
-    }
+		return categories.stream().map(e -> mapper.map(e, CategoryDto.class)).collect(Collectors.toList());
+	}
 
-    /**
-     * Método para crear o actualizar una {@link Category}
-     *
-     * @param id PK de la entidad
-     * @param dto datos de la entidad
-     */
-    @Operation(summary = "Save or Update", description = "Method that saves or updates a Category"
-    )
-    @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
-    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody CategoryDto dto) {
+	/**
+	 * Método para crear o actualizar una {@link Category}
+	 *
+	 * @param id  PK de la entidad
+	 * @param dto datos de la entidad
+	 */
+	@Operation(summary = "Save or Update", description = "Method that saves or updates a Category")
+	@RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
+	public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody CategoryDto dto) {
 
-        this.categoryService.save(id, dto);
-    }
+		this.categoryService.save(id, dto);
+	}
 
-    /**
-     * Método para borrar una {@link Category}
-     *
-     * @param id PK de la entidad
-     */
-    @Operation(summary = "Delete", description = "Method that deletes a Category")
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable("id") Long id) throws Exception {
+	/**
+	 * Método para borrar una {@link Category}
+	 *
+	 * @param id PK de la entidad
+	 */
+	@Operation(summary = "Delete", description = "Method that deletes a Category")
+	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable("id") Long id) throws Exception {
 
-        this.categoryService.delete(id);
-    }
-
+		this.categoryService.delete(id);
+	}
 }

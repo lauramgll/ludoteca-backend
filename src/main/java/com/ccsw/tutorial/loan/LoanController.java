@@ -37,70 +37,69 @@ public class LoanController {
 
 	@Autowired
 	LoanService loanService;
-	
+
 	@Autowired
 	ModelMapper mapper;
-	
-	   /**
-     * Método para recuperar un listado paginado de {@link Loan}
-     *
-     * @param dto dto de búsqueda
-     * @return {@link Page} de {@link LoanDto}
-     */
-    @Operation(summary = "Find Page", description = "Method that return a page of Loans")
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    public Page<LoanDto> findPage(@RequestBody LoanSearchDto dto) {
 
-        Page<Loan> page = loanService.findPage(dto);
-
-        return new PageImpl<>(page.getContent().stream().map(e -> mapper.map(e, LoanDto.class)).collect(Collectors.toList()), page.getPageable(), page.getTotalElements());
-    }
-	
 	/**
-     * Método para crear o actualizar un {@link Loan}
-     *
-     * @param id PK de la entidad
-     * @param dto datos de la entidad
-     */
-    @Operation(summary = "Save or Update", description = "Method that saves or updates a Loan")
-    @RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
-    public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody LoanDto dto) {
+	 * Método para recuperar un listado paginado de {@link Loan}
+	 *
+	 * @param dto dto de búsqueda
+	 * @return {@link Page} de {@link LoanDto}
+	 */
+	@Operation(summary = "Find Page", description = "Method that return a page of Loans")
+	@RequestMapping(path = "", method = RequestMethod.POST)
+	public Page<LoanDto> findPage(@RequestBody LoanSearchDto dto) {
 
-    	this.loanService.save(id, dto);
+		Page<Loan> page = loanService.findPage(dto);
 
-    }
-    
-    /**
-     * Método para borrar un {@link Loan}
-     *
-     * @param id PK de la entidad
-     */
-    @Operation(summary = "Delete", description = "Method that deletes a Loan")
-    @RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
-    public void delete(@PathVariable("id") Long id) throws Exception {
+		return new PageImpl<>(
+				page.getContent().stream().map(e -> mapper.map(e, LoanDto.class)).collect(Collectors.toList()),
+				page.getPageable(), page.getTotalElements());
+	}
 
-        this.loanService.delete(id);
-    }
-    
-    /**
-     * Recupera un listado de préstamos {@link Loan}
-     *
-     * @return {@link List} de {@link LoanDto}
-     */
-    @Operation(summary = "Find", description = "Method that return a list of Loans")
-    @RequestMapping(path = "", method = RequestMethod.GET)
-    public List<LoanDto> findAll() {
+	/**
+	 * Método para crear o actualizar un {@link Loan}
+	 *
+	 * @param id  PK de la entidad
+	 * @param dto datos de la entidad
+	 */
+	@Operation(summary = "Save or Update", description = "Method that saves or updates a Loan")
+	@RequestMapping(path = { "", "/{id}" }, method = RequestMethod.PUT)
+	public void save(@PathVariable(name = "id", required = false) Long id, @RequestBody LoanDto dto) {
 
-        List<Loan> loans = this.loanService.findAll();
+		this.loanService.save(id, dto);
 
-        return loans.stream().map(e -> mapper.map(e, LoanDto.class)).collect(Collectors.toList());
-    }
-    
-    @ExceptionHandler(LoanDateConflictException.class)
-    public ResponseEntity<String> handleLoanDateConflict(LoanDateConflictException ex) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ex.getMessage());
-    }
+	}
 
+	/**
+	 * Método para borrar un {@link Loan}
+	 *
+	 * @param id PK de la entidad
+	 */
+	@Operation(summary = "Delete", description = "Method that deletes a Loan")
+	@RequestMapping(path = "/{id}", method = RequestMethod.DELETE)
+	public void delete(@PathVariable("id") Long id) throws Exception {
+
+		this.loanService.delete(id);
+	}
+
+	/**
+	 * Recupera un listado de préstamos {@link Loan}
+	 *
+	 * @return {@link List} de {@link LoanDto}
+	 */
+	@Operation(summary = "Find", description = "Method that return a list of Loans")
+	@RequestMapping(path = "", method = RequestMethod.GET)
+	public List<LoanDto> findAll() {
+
+		List<Loan> loans = this.loanService.findAll();
+
+		return loans.stream().map(e -> mapper.map(e, LoanDto.class)).collect(Collectors.toList());
+	}
+
+	@ExceptionHandler(LoanDateConflictException.class)
+	public ResponseEntity<String> handleLoanDateConflict(LoanDateConflictException ex) {
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+	}
 }

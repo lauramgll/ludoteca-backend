@@ -22,106 +22,100 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class LoanServiceImpl implements LoanService {
-	
+
 	@Autowired
 	LoanRepository loanRepository;
-	
+
 	@Autowired
 	GameService gameService;
-	
+
 	@Autowired
 	ClientService clientService;
-	
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Loan get(Long id) {
 
-        return this.loanRepository.findById(id).orElse(null);
-    }
-	
-    /**
-     * {@inheritDoc}
-     */
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Loan get(Long id) {
+
+		return this.loanRepository.findById(id).orElse(null);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Page<Loan> findPage(LoanSearchDto dto) {
-	    System.out.println("Processing DTO in service:");
-	    System.out.println("idGame: " + dto.getIdGame());
-	    System.out.println("idClient: " + dto.getIdClient());
-	    System.out.println("date: " + dto.getDate());
-	    return loanRepository.findLoansByFilters(dto.getIdGame(), dto.getIdClient(), dto.getDate(), dto.getPageable().getPageable());
+		System.out.println("Processing DTO in service:");
+		System.out.println("idGame: " + dto.getIdGame());
+		System.out.println("idClient: " + dto.getIdClient());
+		System.out.println("date: " + dto.getDate());
+		return loanRepository.findLoansByFilters(dto.getIdGame(), dto.getIdClient(), dto.getDate(),
+				dto.getPageable().getPageable());
 	}
-	
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save(Long id, LoanDto dto) {
 
-        Loan loan;
-        
-        if (id == null) {
-            loan = new Loan();
-        } else {
-            loan = this.loanRepository.findById(id).orElse(null);
-        }
-        
-        BeanUtils.copyProperties(dto, loan, "id", "game", "client");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void save(Long id, LoanDto dto) {
 
-        loan.setGame(gameService.get(dto.getGame().getId()));
-        loan.setClient(clientService.get(dto.getClient().getId()));
+		Loan loan;
 
-        validateLoanDates(loan);
+		if (id == null) {
+			loan = new Loan();
+		} else {
+			loan = this.loanRepository.findById(id).orElse(null);
+		}
 
-        this.loanRepository.save(loan);
-    }
-    
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Long id) throws Exception {
+		BeanUtils.copyProperties(dto, loan, "id", "game", "client");
 
-        if(this.get(id) == null){
-            throw new Exception("Not exists");
-        }
+		loan.setGame(gameService.get(dto.getGame().getId()));
+		loan.setClient(clientService.get(dto.getClient().getId()));
 
-        this.loanRepository.deleteById(id);
-    }
+		validateLoanDates(loan);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Loan> findAll() {
-        return (List<Loan>) this.loanRepository.findAll();
-    }
-    
-    private void validateLoanDates(Loan loan) {
-    	// Validar que el juego no esté prestado en el rango de fechas
-        List<Loan> existingLoansByGame = loanRepository.findLoansByGameIdAndDateRange(
-            loan.getGame().getId(),
-            loan.getStartDate(),
-            loan.getEndDate()
-        );
-        if (!existingLoansByGame.isEmpty()) {
-            throw new LoanDateConflictException("El juego ya está prestado a otro cliente en el rango de fechas especificado.");
-        }
+		this.loanRepository.save(loan);
+	}
 
-        // Validar que el cliente no tenga más de dos préstamos en un mismo rango de fechas
-        List<Loan> existingLoansByClient = loanRepository.findLoansByClientIdAndDateRange(
-            loan.getClient().getId(),
-            loan.getStartDate(),
-            loan.getEndDate()
-        );
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Long id) throws Exception {
 
-        for (Loan existingLoan : existingLoansByClient) {
-            if (loan.getStartDate().isBefore(existingLoan.getEndDate().plusDays(1)) &&
-                loan.getEndDate().isAfter(existingLoan.getStartDate().minusDays(1))) {
-                throw new LoanDateConflictException("El cliente no puede tener más de dos préstamos activos en un mismo rango de fechas.");
-            }
-        }
-    }
+		if (this.get(id) == null) {
+			throw new Exception("Not exists");
+		}
 
+		this.loanRepository.deleteById(id);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Loan> findAll() {
+		return (List<Loan>) this.loanRepository.findAll();
+	}
+
+	private void validateLoanDates(Loan loan) {
+		
+		// Validar que el juego no esté prestado en el rango de fechas
+		List<Loan> existingLoansByGame = loanRepository.findLoansByGameIdAndDateRange(loan.getGame().getId(), loan.getStartDate(), loan.getEndDate());
+		
+		if (!existingLoansByGame.isEmpty()) {
+			throw new LoanDateConflictException("El juego ya está prestado a otro cliente en el rango de fechas especificado.");
+		}
+
+		// Validar que el cliente no tenga más de dos préstamos en un mismo rango de fechas
+		List<Loan> existingLoansByClient = loanRepository.findLoansByClientIdAndDateRange(loan.getClient().getId(), loan.getStartDate(), loan.getEndDate());
+
+		for (Loan existingLoan : existingLoansByClient) {
+			if (loan.getStartDate().isBefore(existingLoan.getEndDate().plusDays(1))
+			 && loan.getEndDate().isAfter(existingLoan.getStartDate().minusDays(1))) {
+				throw new LoanDateConflictException("El cliente no puede tener más de dos préstamos activos en un mismo rango de fechas.");
+			}
+		}
+	}
 }

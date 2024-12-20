@@ -16,57 +16,56 @@ import java.util.List;
 @Transactional
 public class CategoryServiceImpl implements CategoryService {
 
-    @Autowired
-    CategoryRepository categoryRepository;
+	@Autowired
+	CategoryRepository categoryRepository;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Category get(Long id) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Category get(Long id) {
 
-          return this.categoryRepository.findById(id).orElse(null);
-    }
+		return this.categoryRepository.findById(id).orElse(null);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<Category> findAll() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<Category> findAll() {
 
-          return (List<Category>) this.categoryRepository.findAll();
-    }
+		return (List<Category>) this.categoryRepository.findAll();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void save(Long id, CategoryDto dto) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void save(Long id, CategoryDto dto) {
 
-          Category category;
+		Category category;
 
-          if (id == null) {
-             category = new Category();
-          } else {
-             category = this.get(id);
-          }
+		if (id == null) {
+			category = new Category();
+		} else {
+			category = this.get(id);
+		}
 
-          category.setName(dto.getName());
+		category.setName(dto.getName());
 
-          this.categoryRepository.save(category);
-    }
+		this.categoryRepository.save(category);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(Long id) throws Exception {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void delete(Long id) throws Exception {
 
-          if(this.get(id) == null){
-             throw new Exception("Not exists");
-          }
+		if (this.get(id) == null) {
+			throw new Exception("Not exists");
+		}
 
-          this.categoryRepository.deleteById(id);
-    }
-
+		this.categoryRepository.deleteById(id);
+	}
 }
